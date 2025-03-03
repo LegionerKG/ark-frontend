@@ -10,18 +10,20 @@ function Login({ onLogin }) {
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post(`${API_URL}/token`, { username, password }, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        withCredentials: true
-      });
-      onLogin();
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Error logging in');
-    }
-  };
+  e.preventDefault();
+  try {
+    const response = await axios.post(`${API_URL}/token`, { username, password }, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      withCredentials: true  // Запрос с cookies
+    });
+    
+    localStorage.setItem("token", response.data.access_token); // Сохраняем токен
+    onLogin();
+    navigate("/dashboard");
+  } catch (err) {
+    setError(err.response?.data?.detail || "Error logging in");
+  }
+};
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded shadow mt-10">
