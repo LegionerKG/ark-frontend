@@ -7,45 +7,45 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  // Состояние авторизации: null — проверка, true — авторизован, false — не авторизован
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null — начальное состояние
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-  // Проверка авторизации при загрузке приложения
+  // Проверка авторизации при загрузке
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API_URL}/health`, { 
-          withCredentials: true // Отправляем cookie с токеном
+          withCredentials: true 
         });
-        setIsAuthenticated(response.status === 200); // Устанавливаем статус на основе ответа
+        setIsAuthenticated(response.status === 200);
       } catch (error) {
         console.error('Auth check failed:', error.response?.status || error.message);
-        setIsAuthenticated(false); // Если ошибка, считаем неавторизованным
+        setIsAuthenticated(false);
       }
     };
     checkAuth();
   }, [API_URL]);
 
-  // Обработчик успешного логина
+  // Обработчик логина
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
-  // Обработчик выхода
+  // Обработчик разлогина
   const handleLogout = async () => {
     try {
       await axios.post(`${API_URL}/logout`, {}, { 
-        withCredentials: true // Отправляем запрос на очистку cookie
+        withCredentials: true 
       });
-      setIsAuthenticated(false); // Сбрасываем состояние авторизации
-      window.location.href = '/'; // Перенаправляем на главную страницу
+      setIsAuthenticated(false);
+      window.location.href = '/'; // Перенаправление на главную
     } catch (error) {
       console.error('Logout failed:', error.response?.status || error.message);
+      setIsAuthenticated(false); // Принудительно сбрасываем состояние
     }
   };
 
-  // Пока проверяем авторизацию, показываем загрузку
+  // Показываем загрузку, пока проверяем авторизацию
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -54,7 +54,6 @@ function App() {
     );
   }
 
-  // Основной рендеринг приложения
   return (
     <Router>
       <div className="min-h-screen bg-gray-100">
