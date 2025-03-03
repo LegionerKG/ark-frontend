@@ -10,13 +10,20 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-  useEffect(() => {
-    // Проверка авторизации через наличие cookie (запрос на защищённый маршрут)
-    axios.get(`${API_URL}/health`, { withCredentials: true })
-      .then(() => setIsAuthenticated(true))
-      .catch(() => setIsAuthenticated(false));
-  }, [API_URL]);
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      await axios.get(`${API_URL}/health`, { withCredentials: true });
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Failed to check auth:', error);
+      setIsAuthenticated(false);
+    }
+  };
+  checkAuth();
+}, [API_URL]);
 
+  
   const handleLogin = () => setIsAuthenticated(true);
   const handleLogout = () => {
     axios.post(`${API_URL}/logout`, {}, { withCredentials: true })
