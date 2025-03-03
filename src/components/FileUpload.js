@@ -11,8 +11,6 @@ function FileUpload() {
   const [analysisData, setAnalysisData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // Убедитесь, что API_URL берётся из окружения
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
   const handleFileChange = async (e) => {
@@ -30,18 +28,17 @@ function FileUpload() {
 
     try {
       const response = await axios.post(`${API_URL}/upload`, formData, {
-        withCredentials: true, // Отправка cookie с токеном
+        withCredentials: true
       });
       setColumns(response.data.columns);
       setFileToken(response.data.file_token);
     } catch (err) {
-      // Улучшенная обработка ошибок
-      const errorMessage = err.response?.data?.detail || 'Error uploading file';
-      setError(errorMessage);
-      console.error('Upload failed:', err.response?.status, errorMessage);
       if (err.response?.status === 401) {
         setError('Authentication failed. Please log in again.');
+      } else {
+        setError(err.response?.data?.detail || 'Error uploading file');
       }
+      console.error('Upload error:', err.response?.status, err.response?.data);
     } finally {
       setLoading(false);
     }
