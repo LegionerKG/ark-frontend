@@ -28,7 +28,7 @@ function FileUpload() {
 
     try {
       const response = await axios.post(`${API_URL}/upload`, formData, {
-        withCredentials: true
+        withCredentials: true // Отправляем cookie с токеном
       });
       setColumns(response.data.columns);
       setFileToken(response.data.file_token);
