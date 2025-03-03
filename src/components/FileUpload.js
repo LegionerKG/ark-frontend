@@ -23,19 +23,24 @@ function FileUpload() {
     setAnalysisData(null);
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    const token = localStorage.getItem("token");  // Берем токен из локального хранилища
 
-    try {
-      const response = await axios.post(`${API_URL}/upload`, formData, { withCredentials: true });
-      setColumns(response.data.columns);
-      setFileToken(response.data.file_token);
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Error uploading file');
-    } finally {
-      setLoading(false);
-    }
-  };
+const formData = new FormData();
+formData.append("file", selectedFile);
+
+try {
+  const response = await axios.post(`${API_URL}/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,  // Передаем токен
+    },
+    withCredentials: true,
+  });
+  setColumns(response.data.columns);
+  setFileToken(response.data.file_token);
+} catch (err) {
+  setError(err.response?.data?.detail || "Error uploading file");
+}
+
 
   return (
     <div>
