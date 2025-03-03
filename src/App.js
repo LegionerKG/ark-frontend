@@ -15,12 +15,12 @@ function App() {
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API_URL}/health`, { 
-          withCredentials: true 
+          withCredentials: true // Отправляем cookie
         });
         setIsAuthenticated(response.status === 200);
       } catch (error) {
         console.error('Auth check failed:', error.response?.status || error.message);
-        setIsAuthenticated(false);
+        setIsAuthenticated(false); // Неавторизован при ошибке
       }
     };
     checkAuth();
@@ -35,17 +35,17 @@ function App() {
   const handleLogout = async () => {
     try {
       await axios.post(`${API_URL}/logout`, {}, { 
-        withCredentials: true 
+        withCredentials: true // Очищаем cookie на backend
       });
       setIsAuthenticated(false);
-      window.location.href = '/'; // Перенаправление на главную
+      window.location.href = '/'; // Перенаправляем на главную
     } catch (error) {
       console.error('Logout failed:', error.response?.status || error.message);
-      setIsAuthenticated(false); // Принудительно сбрасываем состояние
+      setIsAuthenticated(false); // Принудительный сброс состояния
     }
   };
 
-  // Показываем загрузку, пока проверяем авторизацию
+  // Пока проверяем авторизацию, показываем загрузку
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
